@@ -39,7 +39,7 @@ function hdr(t) {
 function clr() { clearInterval(tm); var o = stage.querySelector('.ov'); if (o) o.remove() }
 function go(id) { clr(); if (id === 'home') { Q = null; home() } else if (id === 'nucleo') { Q = null; nucleo() } else { Q = { id: id, i: 0, score: 0, streak: 0, h: [] }; qs() } }
 function home() {
-    var c = [['1', 'Correo', '¿Qué dice tu correo de ti?', 'correo', ''], ['2', 'Teléfono', '¿Cuál llamada es estafa?', 'tel', ''], ['3', 'Web', '¿Real o réplica?', 'web', ''], ['★', 'Núcleo', 'Tu memoria compartida', 'nucleo', 'n']];
+    var c = [['1', 'Correo', '¿Cúal correo es real?', 'correo', ''], ['2', 'Teléfono', '¿Cuál llamada es estafa?', 'tel', ''], ['3', 'Web', '¿Real o réplica?', 'web', ''], ['★', 'Núcleo', 'Memoria compartida', 'nucleo', 'n']];
     app.innerHTML = '<div class="top"><div class="tag">CYVORA · SEGURIDAD DIGITAL</div></div><h1>Casi todos<br><span class="pk">lo han vivido.</span></h1><div class="grid">' + c.map(function (x) { return '<div class="card ' + x[4] + '" onclick="go(\'' + x[3] + '\')"><div class="k">' + (DONE[x[3]] ? '✓' : x[0]) + '</div><div><div class="t">' + x[2] + '</div><div class="d">' + (x[3] === 'nucleo' ? 'Estación · Núcleo' : 'Estación · ' + x[1] + ' · 6 preguntas') + '</div></div></div>' }).join('') + '</div><div class="hint">Toca una estación · teclas 1–4 · H inicio · M sonido</div>'
 }
 function dev(q) {
