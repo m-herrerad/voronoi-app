@@ -1,5 +1,22 @@
 var app = document.getElementById('app'), stage = document.getElementById('stage'), tm, idle, ac, mute = false, Q = null, DONE = {}, TL = 20000, ORD = ['correo', 'tel', 'web', 'nucleo'];
-function fit() { var s = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = 'scale(' + s + ')'; stage.style.left = (innerWidth - 1920 * s) / 2 + 'px'; stage.style.top = (innerHeight - 1080 * s) / 2 + 'px' }
+
+function fit() {
+  // 1. Tu escala original basada en el ancho
+  var s = innerWidth / 1920;
+  
+  // 2. Aplicamos el escalado manteniendo el origen arriba al centro
+  stage.style.transform = 'scale(' + s + ')';
+  stage.style.transformOrigin = 'top center';
+  
+  // 3. CENTRADO HORIZONTAL PERFECTO (Fijo y sin cálculos manuales variables)
+  stage.style.position = 'absolute';
+  stage.style.left = '50%';
+  stage.style.marginLeft = '-960px'; // La mitad exacta de 1920px
+  
+  // 4. Mantenemos el inicio pegado arriba para el scroll vertical fluido
+  stage.style.top = '0px'; 
+}
+
 addEventListener('resize', fit); fit();
 function bump() { clearTimeout(idle); idle = setTimeout(function () { go('home') }, 120000) }
 addEventListener('pointerdown', bump);
@@ -39,7 +56,7 @@ function hdr(t) {
 function clr() { clearInterval(tm); var o = stage.querySelector('.ov'); if (o) o.remove() }
 function go(id) { clr(); if (id === 'home') { Q = null; home() } else if (id === 'nucleo') { Q = null; nucleo() } else { Q = { id: id, i: 0, score: 0, streak: 0, h: [] }; qs() } }
 function home() {
-    var c = [['1', 'Correo', '¿Cúal correo es real?', 'correo', ''], ['2', 'Teléfono', '¿Cuál llamada es estafa?', 'tel', ''], ['3', 'Web', '¿Real o réplica?', 'web', ''], ['★', 'Núcleo', 'Memoria compartida', 'nucleo', 'n']];
+    var c = [['1', 'Correo', '¿Qué dice tu correo de ti?', 'correo', ''], ['2', 'Teléfono', '¿Cuál llamada es estafa?', 'tel', ''], ['3', 'Web', '¿Real o réplica?', 'web', ''], ['★', 'Núcleo', 'Memoria compartida', 'nucleo', 'n']];
     app.innerHTML = '<div class="top"><div class="tag">CYVORA · SEGURIDAD DIGITAL</div></div><h1>Casi todos<br><span class="pk">lo han vivido.</span></h1><div class="grid">' + c.map(function (x) { return '<div class="card ' + x[4] + '" onclick="go(\'' + x[3] + '\')"><div class="k">' + (DONE[x[3]] ? '✓' : x[0]) + '</div><div><div class="t">' + x[2] + '</div><div class="d">' + (x[3] === 'nucleo' ? 'Estación · Núcleo' : 'Estación · ' + x[1] + ' · 6 preguntas') + '</div></div></div>' }).join('') + '</div><div class="hint">Toca una estación · teclas 1–4 · H inicio · M sonido</div>'
 }
 function dev(q) {
@@ -73,7 +90,7 @@ function fin() {
 var CH = ['Un SMS de mi banco falso', 'Una llamada pidiendo mi clave', 'Una tienda que nunca me llegó', 'Un correo de mi “jefe”', 'Una voz clonada', 'Un enlace por WhatsApp'], CT = [0, 0, 0, 0, 0, 0], CC = ['#F23A95', '#8A0F67', '#4DAC32', '#17470E'];
 function nucleo() {
     CT = [0, 0, 0, 0, 0, 0];
-    app.innerHTML = hdr('NUCLEO · MEMORIA COMPARTIDA') + '<h2 style="text-align:center">Tu <span class="pk">memoria</span> compartida</h2><div class="sc"><div><div class="big" data-n="36" data-s="%">0%</div><p>ha sido víctima de fraude digital</p></div><div><div class="big" data-n="40" data-s="%">0%</div><p>no identifica un sitio falso</p></div><div><div class="big" data-n="90" data-s="%">0%</div><p>siente que el fraude está presente</p></div></div><div class="fin">Toca lo que <span class="pk">también te pasó</span></div><div class="chips">' + CH.map(function (c, i) { return '<div class="chip" onclick="addc(' + i + ')">' + c + '<b id="cc' + i + '">0</b></div>' }).join('') + '</div><div class="wall" id="wall"></div><div class="fin" style="font-size:40px;margin-top:16px">El engaño está diseñado para parecer real. <span class="gl">Caer en él no te hace ingenuo. Te hace humano.</span></div>';
+    app.innerHTML = hdr('NUCLEO · MEMORIA COMPARTIDA') + '<h2 style="text-align:center"> <span class="pk">memoria</span> compartida</h2><div class="sc"><div><div class="big" data-n="36" data-s="%">0%</div><p>ha sido víctima de fraude digital</p></div><div><div class="big" data-n="40" data-s="%">0%</div><p>no identifica un sitio falso</p></div><div><div class="big" data-n="90" data-s="%">0%</div><p>siente que el fraude está presente</p></div></div><div class="fin">Toca lo que <span class="pk">también te pasó</span></div><div class="chips">' + CH.map(function (c, i) { return '<div class="chip" onclick="addc(' + i + ')">' + c + '<b id="cc' + i + '">0</b></div>' }).join('') + '</div><div class="wall" id="wall"></div><div class="fin" style="font-size:40px;margin-top:16px">El engaño está diseñado para parecer real. <span class="gl">Caer en él no te hace ingenuo. Te hace humano.</span></div>';
     var els = app.querySelectorAll('[data-n]'), t0 = Date.now(); tm = setInterval(function () { var p = Math.min(1, (Date.now() - t0) / 2200); els.forEach(function (e) { e.textContent = Math.round(e.dataset.n * p) + e.dataset.s }); if (p >= 1) clearInterval(tm) }, 40)
 }
 function addc(i) { CT[i]++; document.getElementById('cc' + i).textContent = CT[i]; var w = document.getElementById('wall'), d = document.createElement('div'); d.className = 'cell'; d.textContent = CH[i]; d.style.cssText = 'left:' + Math.random() * (w.clientWidth - 460) + 'px;top:' + Math.random() * (w.clientHeight - 70) + 'px;background:' + CC[Math.floor(Math.random() * 4)]; w.appendChild(d); if (w.children.length > 28) w.removeChild(w.firstChild); beep(500 + i * 60, .12) }
